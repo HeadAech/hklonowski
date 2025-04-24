@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+
+    <style>
+        body {
+            background-image: url("img/Sabotażysta\ logo.png");
+            background-repeat: no-repeat;
+            background-position: right;
+            background-attachment: fixed;
+            background-color: rgba(255, 255, 255, 0.8);
+            background-blend-mode: lighten;
+        }
+        #window {
+            display: block;
+            width: 90%;
+            margin: auto;
+            margin-top: 20px;
+            /* border: 1px solid black; */
+            border-radius: 10px;
+            padding: 10px;
+            background-color: white;
+        }
+        #question {
+            font-size: 1.2em;
+            text-align: center;
+        }
+        #radios {
+            margin: 10px;
+        }
+
+        .sabo {
+            color: red;
+            font-weight: bold;
+        }
+
+        .uczestnik {
+            color:cornflowerblue;
+            font-weight: bold;
+        }
+        
+    </style>
+
+    
+</head>
+<body onload="onLoad()">
+
+    <div id="window" class="border">
+        <!-- Ekran powitalny -->
+        <div id="welcomeScreen">
+            <h2>Witaj w Quizie!</h2>
+            <p>Po kliknięciu start będziesz mieć 10 minut na rozwiązanie wszystkich zadań.</p>
+            <p>Za poprawną odpowiedź punkt trafia na konto <span class="uczestnik">Uczestników</span>, lecz za złą - na konto <span class="sabo">Sabotażystów.</span></p>
+            <p><b>Ważne!</b> Nie można swobodnie poruszać się między pytaniami. Jeśli pytanie zostanie zatwierdzone, odpowiedzi nie da się zmienić.</p>
+            <br>
+            <p><b><i>Powodzenia!</i></b></p>
+
+            <button class="btn btn-primary" style="display: block; margin: auto;" onclick="start()">Rozpocznij quiz</button>
+        </div>
+        <!-- Ekran quizu -->
+        <div id="quiz">
+            <span class="badge rounded-pill text-bg-danger" id="timeLeft">10:00</span>
+            <br>
+            <span class="badge rounded-pill text-bg-secondary" id="questionNumber">1/2</span>
+            <span id="question">
+                Pytanie
+            </span>
+            <br>
+        
+            <div id="radios">
+                <input class="form-check-input" type="radio" name="answerRadio" id="radio1" value="0" checked></input>
+                <label class="form-check-label" for="radio1">
+                    Default radio
+                </label>
+                <br>
+                <input class="form-check-input" type="radio" name="answerRadio" id="radio2" value="1"></input>
+                <label class="form-check-label" for="radio2">
+                    Default radio
+                </label>
+                <br>
+                <input class="form-check-input" type="radio" name="answerRadio" id="radio3" value="2"></input>
+                <label class="form-check-label" for="radio3">
+                    Default radio
+                </label>
+            </div>
+    
+            <div>
+                <button class="btn btn-success" onclick="onAnswer()">Zatwierdź</button>
+            </div>
+        </div>
+
+        <!-- Ekran końcowy -->
+        <div id="gameover">
+            <h2 class="">Koniec gry!</h2>
+            <p>Znamy już twój wynik. Proszę o zapisanie pliku oraz wysłanie go do organizatora. 👌</p>
+            <p>Nie otwieraj go. Za poznanie zawartości pliku przewidziana jest kara.</p>
+            <button class="btn btn-success" onclick="saveToFile()">Zapisz wynik</button>
+        </div>
+    </div>
+   
+    <script>
+
+        const questions = [
+            {
+                question : "Pytanie 1",
+                answers : ["A - Odp 1", "B - Odp 2", "C - Odp 3"],
+                correct : 0
+            },
+            {
+                question : "Pytanie 2",
+                answers : ["A - Odp 1", "B - Odp 2", "C - Odp 3"],
+                correct : 1
+            }
+        ]
+
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+
+        let currentQuestion = 0;
+
+        let questionSpan = document.getElementById("question");
+        let radios = document.getElementsByName("answerRadio");
+        let radioLabels = document.getElementsByClassName("form-check-label");
+
+        const quizDiv = document.getElementById("quiz");
+        const gameOverDiv = document.getElementById("gameover");
+        const questionNumberSpan = document.getElementById("questionNumber");
+        const welcomeScreen = document.getElementById("welcomeScreen");
+
+        let correctSpan = document.getElementById("correctSpan");
+        let incorrectSpan = document.getElementById("incorrectSpan");
+
+        function onLoad() {
+            gameOverDiv.style.display = "none";
+            quizDiv.style.display = "none";
+        }
+
+        function start() {
+            quizDiv.style.display = "block";
+            welcomeScreen.style.display = "none";
+            loadQuestion(currentQuestion);
+            started = true;
+            updateTimer(); // Wywołaj od razu, żeby nie czekać sekundy
+
+        }
+
+        function loadQuestion(index) {
+            questionNumberSpan.innerHTML = currentQuestion + 1 + "/" + questions.length
+            if (questions.length == index) {
+                endGame();
+                return;
+            }
+            questionSpan.innerHTML = questions[index].question;
+            for (let i = 0; i < 3; i++) {
+                radioLabels[i].innerHTML = questions[index].answers[i];
+            }
+        }
+
+        function onAnswer() {
+            let correctAnswer = questions[currentQuestion].correct;
+            if (radios[correctAnswer].checked) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            currentQuestion++;
+            loadQuestion(currentQuestion);
+        }
+
+        function endGame() {
+            started = false;
+            if (currentQuestion < questions.length) {
+                incorrectAnswers += questions.length - currentQuestion;
+            }
+            quizDiv.style.display = "none";
+            gameOverDiv.style.display = "block";
+
+            correctSpan.innerHTML = correctAnswers.toString();
+            incorrectSpan.innerHTML = incorrectAnswers.toString();
+        }
+
+        let time = 10 * 60; // 10 minut w sekundach
+        let started = false;
+        const timerElement = document.getElementById('timeLeft');
+
+        function updateTimer() {
+            if (!started) return;
+
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            timerElement.textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (time > 0) {
+                time--;
+            } else {
+                clearInterval(timerInterval);
+                timerElement.textContent = "Koniec!";
+                endGame();
+            }
+        }
+        function saveToFile() {
+            const wynik = "Correct: " + correctAnswers.toString() + " | Incorrect: " + incorrectAnswers.toString() + " | Time left: " + time.toString();
+            const blob = new Blob([wynik], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wynik.txt'; // nazwa pliku
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            URL.revokeObjectURL(url); // sprzątanie
+        }
+
+        const timerInterval = setInterval(updateTimer, 1000);
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+
+</body>
+</html>
