@@ -42,6 +42,11 @@
             color:cornflowerblue;
             font-weight: bold;
         }
+
+        #timeLeft {
+            display: inline-block;
+            float: right;
+        }
         
     </style>
 
@@ -55,7 +60,7 @@
             <h2>Witaj w Quizie!</h2>
             <p>Po kliknięciu start będziesz mieć 10 minut na rozwiązanie wszystkich zadań.</p>
             <p>Za poprawną odpowiedź punkt trafia na konto <span class="uczestnik">Uczestników</span>, lecz za złą - na konto <span class="sabo">Sabotażystów.</span></p>
-            <p><b>Ważne!</b> Nie można swobodnie poruszać się między pytaniami. Jeśli pytanie zostanie zatwierdzone, odpowiedzi nie da się zmienić.</p>
+            <p><b>Ważne!</b> Nie można swobodnie poruszać się między pytaniami. Jeśli pytanie zostanie zatwierdzone, odpowiedzi nie da się zmienić. Również zatwierdzenie odpowiedzi bez zaznaczenia skutkować będzie uznaniem pytania za niezaliczone.</p>
             <br>
             <p><b><i>Powodzenia!</i></b></p>
 
@@ -64,11 +69,13 @@
         <!-- Ekran quizu -->
         <div id="quiz">
             <span class="badge rounded-pill text-bg-danger" id="timeLeft">10:00</span>
-            <br>
             <span class="badge rounded-pill text-bg-secondary" id="questionNumber">1/2</span>
             <span id="question">
                 Pytanie
             </span>
+            <br>
+
+            <img id="questionImg" src="" style="display: block; margin: auto; max-width: 400px; max-height: 300px;"/>
             <br>
         
             <div id="radios">
@@ -106,14 +113,129 @@
 
         const questions = [
             {
-                question : "Pytanie 1",
-                answers : ["A - Odp 1", "B - Odp 2", "C - Odp 3"],
+                question : "Kto jest prezydentem Sopotu?",
+                answers : ["Karol Wegner", "Magdalena Czarzyńska-Jachim", "Magdalena Cieślik"],
+                correct : 1
+            },
+            {
+                question : "Jak brzmi pełna nazwa hotelu znajdującego się obok?",
+                answers : ["Grand Hotel", "Sofitel Hotel", "Sofitel Grand Sopot"],
+                correct : 2
+            },
+            {
+                question : "Kiedy wydany został album \"Marmur\" autorstwa Taco Hemingwaya?",
+                answers : ["3 listopada 2016", "1 listopada 2016", "13 listopada 2017"],
                 correct : 0
             },
             {
-                question : "Pytanie 2",
-                answers : ["A - Odp 1", "B - Odp 2", "C - Odp 3"],
+                question : "Ile utworów znajduje się na płycie \"Marmur\"?",
+                answers : ["17", "16", "18"],
+                correct : 0
+            },
+            {
+                question : "Czym są \"świecące prostokąty\" wspominane w utworze \"Świecące prostokąty\"?",
+                answers : ["Billboardy", "Smartfony", "Okna biurowców"],
                 correct : 1
+            },
+            {
+                question : "Ile województw jest w Polsce?",
+                answers : ["14", "16", "18"],
+                correct : 1
+            },
+            {
+                question : "Które miasta wchodzą w skład Trójmiasta?",
+                answers : ["Gdańsk, Reda, Sopot", "Gdynia, Puck, Sopot", "Gdańsk, Gdynia, Sopot"],
+                correct : 2
+            },
+            {
+                question : "Ile kwadratów jest na rysunku?",
+                answers : ["18", "16", "17"],
+                correct : 0,
+                img: "img/sqr.png"
+            },
+            {
+                question : "Co będzie wynikiem kodu?",
+                answers : ["0<br>1<br>2<br>3<br>4", "1<br>2<br>3<br>4<br>5", "1 2 3 4 5"],
+                correct : 1,
+                img: "img/code1.png"
+            },
+            {
+                question : "Jaki wynik miała Weronika na maturze podstawowej z matematyki?",
+                answers : ["29%", "69%", "72%"],
+                correct : 1
+            },
+            {
+                question : "Jak brzmi rozwinięcie skrótu ZSMEiE?",
+                answers : ["Zespół Szkół Mechanicznych, Elektronicznych i Elektrycznych", "Zespół Szkół Mechatronicznych, Elektrycznych i Elektronicznych", "Zespół Szkół Mechanicznych, Elektrycznych i Elektronicznych"],
+                correct : 2,
+                img : "img/szmeje.png"
+            },
+            {
+                question : "Jak zapisana jest litera \"H\" w kodzie Morse'a?",
+                answers : ["....", ".--.", "-"],
+                correct : 0
+            },
+            {
+                question : "Jak nazywa się ulica, przy której stoi Grand Hotel?",
+                answers : ["Powstańców Warszawy", "Mariana Mokwy", "Morska"],
+                correct : 0
+            },
+            {
+                question : "Niedaleko stoi pomnik - kogo przedstawia?",
+                answers : ["Aleksandra Majkowskiego", "Neptuna", "Jana Jerzego Haffnera"],
+                correct : 2
+            },
+            {
+                question : "Nieopodal znajduje się taki obiekt. Jak się nazywa?",
+                answers : ["Hoten Bayjonn", "Hotel Sheraton", "Hotel Allure"],
+                correct : 1,
+                img: "img/sheraton.jpg"
+            },
+            {
+                question : "Przy jakiej ulicy mieszkają Hubert i Weronika w Łodzi?",
+                answers : ["Gładka", "Sarnia", "Sucha"],
+                correct : 2
+            },
+            {
+                question : "Jakiego miasta to flaga?",
+                answers : ["Gdańska", "Gdyni", "Sopotu"],
+                correct : 2,
+                img: "img/sopotflag.png"
+            },
+            {
+                question : "Jakiego miasta to flaga?",
+                answers : ["Gdańska", "Gdyni", "Sopotu"],
+                correct : 0,
+                img: "img/gdanskflag.png"
+            },
+            {
+                question : "Kto to?",
+                answers : ["Magdalena Czarzyńska-Jachim - Prezydent miasta Sopotu", "Hanna Zdanowska - Prezydent miasta Łodzi", "Majka Jezowska - piosenkarka dla dzieci"],
+                correct : 1,
+                img: "img/hanka.jpg"
+            },
+            {
+                question : "Czyje to logo?",
+                answers : ["CD Projekt RED", "Techland", "Red Bird Entertainment"],
+                correct : 0,
+                img: "img/cdprojekt.png"
+            },
+            {
+                question : "Czyje to logo?",
+                answers : ["Biblioteki Politechniki Bydgoskiej", "Politechniki Bydgoskiej", "Biblioteki Publicznej miasta Sopotu"],
+                correct : 1,
+                img: "img/pbs.png"
+            },
+            {
+                question : "Funkcja przyjmuje parametr <code>liczba</code>, który jest typu całkowitego. Ile musi wynieść <code>liczba</code>, aby zwrócona została wartość <code>true</code> (prawda)?",
+                answers : ["1", "2", "3"],
+                correct : 1,
+                img: "img/code2.png"
+            },
+            {
+                question : "Kiedy powstała marka Five o'Clock?",
+                answers : ["w 1990 roku", "w 1995 roku", "w 2000 roku"],
+                correct : 0
             }
         ]
 
@@ -130,6 +252,7 @@
         const gameOverDiv = document.getElementById("gameover");
         const questionNumberSpan = document.getElementById("questionNumber");
         const welcomeScreen = document.getElementById("welcomeScreen");
+        const questionImg = document.getElementById("questionImg");
 
         let correctSpan = document.getElementById("correctSpan");
         let incorrectSpan = document.getElementById("incorrectSpan");
@@ -149,6 +272,9 @@
         }
 
         function loadQuestion(index) {
+            radios[0].checked = false;
+            radios[1].checked = false;
+            radios[2].checked = false;
             questionNumberSpan.innerHTML = currentQuestion + 1 + "/" + questions.length
             if (questions.length == index) {
                 endGame();
@@ -157,6 +283,12 @@
             questionSpan.innerHTML = questions[index].question;
             for (let i = 0; i < 3; i++) {
                 radioLabels[i].innerHTML = questions[index].answers[i];
+            }
+            if (questions[index].img) {
+                questionImg.style.display = "block";
+                questionImg.src = questions[index].img;
+            } else {
+                questionImg.style.display = "none";
             }
         }
 
